@@ -1,7 +1,7 @@
 ---
 layout: list
-title: Study
-slug: study
+title: Table Tannis
+slug: table tannis
 menu: true
 submenu: true
 order: 3
