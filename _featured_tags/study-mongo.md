@@ -2,7 +2,7 @@
 layout: tag-blog
 title: MongoDB
 slug: mongodb
-category: devlog
+category: study
 menu: false
 order: 3
 ---
