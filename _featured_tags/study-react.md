@@ -2,7 +2,7 @@
 layout: tag-blog
 title: React
 slug: react
-category: devlog
+category: study
 menu: false
-order: 1
+order: 3
 ---
