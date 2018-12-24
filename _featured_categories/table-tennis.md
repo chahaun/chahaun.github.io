@@ -1,7 +1,7 @@
 ---
 layout: list
-title: Table Tannis
-slug: table tannis
+title: Table Tennis
+slug: table tennis
 menu: true
 submenu: true
 order: 3
