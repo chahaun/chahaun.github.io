@@ -1,9 +1,9 @@
 ---
 layout: post
-title:  "XECon 2016 후기"
-subtitle:   "XECon 2016에 다녀와서 메모한 것들을 정리해 본다."
+title:  "게시글 테스트 타이틀"
+subtitle:   "게시글 테스트의 서브타이틀"
 categories: review
-tags: event webpack xecon
+tags: book webpack xecon
 ---
 
 XECon 2016에 다녀와서 메모한 것들을 정리해 본다.
