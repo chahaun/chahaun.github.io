@@ -6,5 +6,5 @@ menu: true
 submenu: false
 order: 4
 description: >
-  여러 팁들을 공유합니다.
+  공부하여 얻은 팁들을 정리하고 공유합니다.
 ---
