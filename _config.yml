@@ -18,7 +18,7 @@ tagline:             탁구를 좋아하는 개발자.
 # A short description of the page, used in the sidebar and as fallback for the meta description tag.
 # Markdown enabled, but don't use more than one paragraph (enforced by `>`)
 description:         >
-  새로운 것에 대한 관심
+  새로운 것에 대한 관심<br>
   탁구를 좋아하는 개발자
 
 # This should be the same author as first entry in `_data/authors.yml`
