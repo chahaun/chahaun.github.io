@@ -5,5 +5,5 @@ title: Skill
 slug: skill
 category: tabletennis
 menu: false
-order: 2
+order: 1
 ---
