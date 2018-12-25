@@ -4,6 +4,6 @@ title: Vue
 slug: vue
 category: study
 menu: false
-order: 2
+order: 5
 header-img: "/img/vue-logo.png"
 ---
