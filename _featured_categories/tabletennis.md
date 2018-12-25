@@ -1,7 +1,7 @@
 ---
 layout: list
 title: Table Tennis
-slug: table tennis
+slug: tabletennis
 menu: true
 submenu: true
 order: 6
