@@ -1,7 +1,7 @@
 ---
 layout: tag-blog
-title: Node.js
-slug: nodejs
+title: Node
+slug: node
 category: study
 menu: false
 order: 3
