@@ -43,6 +43,7 @@ server.on('error', (err) => {
 res.end는 응답을 종료하는 메서드로, 인자를 보내고 응답을 종료한다.  
 일단 res.write로 HTML코드를 작성하는 것은 비효율적이므로 html파일은 따로 사용하자.  
 위 코드를 아래와 같이 수정한다.  
+
 <server1.html>
 ~~~
 <!DOCTYPE html>
@@ -76,10 +77,44 @@ server.on('error', (err) => {
   console.error(err);
 });
 ~~~
+
 이렇게 해서 js파일에서 html을 불러와 서버페이지를 구성하게 되었다.  
 지금은 요청이 오는 모두에게 같은 응답을 보내지만, 다음에는 누구인지에 따라 다른 응답을 해보자.  
 
 ### 쿠키와 세션
 
+우리가 서버페이지에 접속하여 로그인할때 내부적으로는 쿠키와 세션을 사용하고 있다.  
+서버가 요청에 대한 응답을 할때 쿠키를 같이 보내주며, 웹 브라우저는 쿠키를 저장해두었다가  
+요청할 때마다 쿠키를 동봉해서 보내준다. 데이터는 단순한 '키-값' 쌍으로 구성되어 있으며,  
+서버는 요청에 들어있는 쿠키를 읽어서 사용자가 누구인지 파악한다.  
 
+즉, 서버는 미리 클라이언트에게 요청자를 추정할 만한 정보를 쿠키로 만들어서 보내고,  
+그 다음부터는 클라이언트로부터 쿠키를 받아 요청자를 파악한다.  
+쿠키는 요청과 응답의 헤더에 저장된다.  
+
+~~~
+const http = require('http');
+const parseCookies = (cookie = '') =>
+  cookie
+    .split(';')   //문자열을 ; 구분자로 분할
+    .map(v => v.split('=')) // 각 나누어진 문자열들을 '=' 으로 구분해 분할
+                            // 키는 k, 값은 vs에 저장. 
+    .map(([k, ...vs]) => [k, vs.join('=')]) //
+    .reduce( (acc, [k, v]) => {
+      acc[k.trim()] = decodeURIComponent(v);
+      return acc;
+    }, {} );
+    
+http.createServer((req, res) => {
+  const cookies = parseCookies(req.headers.cookie);
+  console.log(req.url, cookies);
+  res.writeHead(200, { 'Set-Cookie': 'mycookie=test' });
+  res.end('Hello Cookie');
+}).listen(8080, () => {
+    console.log('서버 대기중...');
+  });
+~~~
+
+위 코드는 parseCookies라는 문자열 형식을 쿠키 객체형태로 바꾸도록 한다.  
+name=chahaun;year=1995같은 문자열을 {name:'chahaun', year:'1995'}처럼 바꾸는 것이다.  
 
