@@ -103,15 +103,15 @@ const parseCookies = (cookie = '') =>
     .map(v => v.split('=')) // 각 나누어진 문자열들을 '=' 으로 구분해 분할
                             // 키는 k, 값은 vs에 저장. 
     .map(([k, ...vs]) => [k, vs.join('=')]) //
-    .reduce( (acc, [k, v]) => {
+    .reduce( (acc, [k, v]) => {   // acc와 [k, v]는 다음 콜백함수 처리한다.
       acc[k.trim()] = decodeURIComponent(v);
       return acc;
-    }, {} );
+    }, {} );  // {} 이부분은 초기값 설정부분
     
 http.createServer((req, res) => {
-  const cookies = parseCookies(req.headers.cookie);
+  const cookies = parseCookies(req.headers.cookie); //헤더에 담긴 쿠키값을 인자로 넘김.
   console.log(req.url, cookies);
-  res.writeHead(200, { 'Set-Cookie': 'mycookie=test' });
+  res.writeHead(200, { 'Set-Cookie': 'mycookie=test' });  //응답코드와 헤더내용 입력
   res.end('Hello Cookie');
 }).listen(8080, () => {
     console.log('서버 대기중...');
@@ -119,5 +119,10 @@ http.createServer((req, res) => {
 ~~~
 
 위 코드는 parseCookies라는 문자열 형식을 쿠키 객체형태로 바꾸도록 한다.  
-name=chahaun;year=1995같은 문자열을 {name:'chahaun', year:'1995'}처럼 바꾸는 것이다.  
+쿠키는 name=chahaun;year=1995같은 문자열로 되어있어서, 이를 파싱하여  
+{name:'chahaun', year:'1995'}처럼 바꾸는 것이다.  
+createServer에서 writeHead의 Set-Cookie는 다음과 같은 값의 쿠키를 저장하라는 의미이다.  
+응답을 받은 브라우저는 mycookie=test라는 쿠키를 저장하며, 쿠키를 파싱한다.  
+
+이 쿠키와 세션 개념을 이용하여 로그인을 구현하는 코드를 작성해 볼 수 있다.  
 
