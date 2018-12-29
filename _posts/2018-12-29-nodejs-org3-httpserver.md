@@ -39,3 +39,47 @@ server.on('error', (err) => {
   console.error(err);
 });
 ~~~
+여기서 res.write는 클라이언트에게 보낼 데이터이다. 어떤 종류든 상관없다. 여러번도 가능.  
+res.end는 응답을 종료하는 메서드로, 인자를 보내고 응답을 종료한다.  
+일단 res.write로 HTML코드를 작성하는 것은 비효율적이므로 html파일은 따로 사용하자.  
+위 코드를 아래와 같이 수정한다.  
+<server1.html>
+~~~
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Hello Node</title>
+</head>
+<body>
+  <h1>Hello Node</h1>
+  <p>Hello Server</p>
+</body>
+</html>
+~~~
+<server1.js>
+~~~
+const http = require('http');
+const fs = require('fs');
+
+const server = http.createServer((req, res) => {
+  fs.readFile('./server1.html', (err, data) => {
+    if (err) throw err;
+    res.end(data);
+  });
+});
+server.listen(8080);
+server.on('listening', () => {
+  console.log('서버 대기중');
+});
+server.on('error', (err) => {
+  console.error(err);
+});
+~~~
+이렇게 해서 js파일에서 html을 불러와 서버페이지를 구성하게 되었다.  
+지금은 요청이 오는 모두에게 같은 응답을 보내지만, 다음에는 누구인지에 따라 다른 응답을 해보자.  
+
+### 쿠키와 세션
+
+
+
