@@ -39,12 +39,13 @@ server.on('error', (err) => {
   console.error(err);
 });
 ~~~
+
 여기서 res.write는 클라이언트에게 보낼 데이터이다. 어떤 종류든 상관없다. 여러번도 가능.  
 res.end는 응답을 종료하는 메서드로, 인자를 보내고 응답을 종료한다.  
 일단 res.write로 HTML코드를 작성하는 것은 비효율적이므로 html파일은 따로 사용하자.  
 위 코드를 아래와 같이 수정한다.  
 
-<server1.html>
+* server1.html
 ~~~
 <!DOCTYPE html>
 <html>
@@ -58,7 +59,7 @@ res.end는 응답을 종료하는 메서드로, 인자를 보내고 응답을 �
 </body>
 </html>
 ~~~
-<server1.js>
+* server1.js
 ~~~
 const http = require('http');
 const fs = require('fs');
