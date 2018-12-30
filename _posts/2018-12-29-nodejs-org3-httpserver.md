@@ -178,7 +178,7 @@ http.createServer((req, res) => {
       if (err) {  // 입력 에러처리
         throw err;
       }
-      res.end(data);  // 읽어온 html문서를 
+      res.end(data);  // 읽어온 html문서를 출력
     });
   }
 })  // 클라이언트 접속 대기
@@ -187,3 +187,71 @@ http.createServer((req, res) => {
   });
 ~~~
 
+참고로 const { name } = qs.parse(query)는 ES6문법으로 이전 문법은 다음을 나타낸다.  
+`var name = qs.parse(query).name;`  
+그러나 위 js파일의 코드는 보안에 위험하다. 쿠키가 노출되어있기 때문이다.  
+그래서 세션을 사용하는 것이 안전하다. 위에서 name의 값을 세션처리 해준다.  
+
+~~~
+const http = require('http');
+const fs = require('fs');
+const url = require('url');
+const qs = require('querystring');
+
+const parseCookies = (cookie = '') =>
+  cookie
+    .split(';')
+    .map(v => v.split('='))
+    .reduce((acc, [k, v]) => {
+      acc[k.trim()] = decodeURIComponent(v);
+      return acc;
+    }, {});
+    
+const session = {};   // ●세션변수 하나 생성
+
+http.createServer((req, res) => {
+  const cookies = parseCookies(req.headers.cookie);
+  if (req.url.startsWith('/login')) {
+    const { query } = url.parse(req.url);
+    const { name } = qs.parse(query);
+    const expires = new Date();
+    expires.setMinutes(expires.getMinutes() + 5);
+    
+    const randomInt = +new Date();    // ●new Date().getTime()과 같다. 랜덤숫자 저장
+    session[randomInt] = {
+      name,     // 사용자의 이름
+      expires,  // 만료시간
+    };          // 두가지는 session객체에 저장한다.
+    
+    res.writeHead(302, {
+      Location: '/', 
+      'Set-Cookie': `
+      session=${randonInt};
+      Expires=${expires.toGMTString()}; 
+      HttpOnly; 
+      Path=/
+      `,
+    });
+    res.end();
+    // ●쿠키의 세션이 있고, 만료기한을 넘기지 않았다면 사용자 정보 출력
+  } else if (cookies.session && session[cookies.session].expires > new Date()) {   
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    res.end(`${session[cookies.session].name}님 안녕하세요`); // ●이렇게 출력
+  } else {  
+    fs.readFile('./server4.html', (err, data) => {
+      if (err) { 
+        throw err;
+      }
+      res.end(data); 
+    });
+  }
+})
+  .listen(8080, () => {
+    console.log('서버 대기중...');
+  });
+~~~
+
+위 방법이 세션이며, 클라이언트와 서버는 세션 아이디로만 소통한다.  
+실제 서버에선 변수를 위와같이 저장하면 서버가 멈추거나 재시작될 때 변수가 초기화 되므로,  
+보통은 데이터베이스에 저장한다. 이러한 쿠키와 세션을 매번 직접 구현할 수 없으므로  
+다른사람이 만든 안전하고 검증된 코드를 사용하는 것이 좋다. 모듈을 이용하는 것이다.
