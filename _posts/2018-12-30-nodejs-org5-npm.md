@@ -63,7 +63,7 @@ npm의 전역설치는 패키지를 현재폴더가 아닌 npm자체가 설치�
 전역설치는 package.json에 기록되지 않아서 다시 설치할 때 어려움이 있는데,  
 npx 명령어를 이용하면 기록이 되면서 전역설치한 효과를 얻을 수 있다.  
 npm에 등록되어 있지 않고 github에 저장되어 있을 땐, npm install git허브주소로 설치.  
-npm install 명령어는 npm i로 줄여쓸 수 있으며, --save-dev는 -D, --global은 -g  
+npm install 명령어는 npm i로 줄여쓸 수 있으며, --save-dev는 -D, --global은 -g로 쓴다.  
 
 ### 패키지 버전 이해하기
 
