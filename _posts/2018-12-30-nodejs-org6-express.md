@@ -96,3 +96,74 @@ connect-flash는 일회성 메세지들을 웹 브라우저에 나타낼 때 사
 
 ### Router 객체로 라우팅 분리하기
 
+이전에 라우터를 만들 때 요청메서드와 주소별로 if문 분기처리를 해서 코드가 복잡했다.  
+익스프레스는 라우팅을 깔끔하게 관리할 수 있다. 다음 app.js의 일부를 보자.  
+
+~~~
+...
+var indexRouter = require('./routes/index');
+var userRouter = require('./routes/users');
+...
+app.use('/', indexRouter);        // 주소가 '/' 로 시작하면 routes/index.js 호출
+app.user('/users', userRouter);   // '/users' 로 시작하면 routes/users.js 호출
+...
+~~~
+
+app.use로 연결되어 있는걸 보면 라우터도 일종의 미들웨어로 볼 수 있다.  
+다른 미들웨어와 다르게 앞에 주소가 붙어있다. 그래서 이 주소에 해당하는 요청이  
+왔을 때만 미들웨어가 동작하게 할 수 있다.  
+app.use 대신 get, post, put, patch, delete같은 HTTP 메서드를 사용할 수 있다.  
+그러면 get을 썼다면 get 메서드의 특정 주소에 요청일때만 실행되는 식이다.  
+use일때는 HTTP 메서드는 상관없다.  
+
+라우터 파일들은 위와 같이 routes폴더에 존재하며, index, users 라우터가 있다.  
+/routes/index.js 파일은 다음과 같다.  
+
+~~~
+var express = require('express');
+var router = express.Router();  // 라우터객체는 이와같이 만든다
+
+router.get('/', function(req, res, next) {   // '/' 주소로 GET 요청을 한다
+  res.render('index', {title: 'Express' });  // 클라이언트에게 응답을 보낸다
+});
+module.exports = router;    // 라우터를 모듈로 만든다
+~~~
+
+router에도 use, get, post, put, patch, delete 메서드를 붙일 수 있다.  
+또한 router 하나에 미들웨어 여러 개를 장착할 수 있다.  
+라우터에서는 반드시 요청에 대한 응답을 보내거나 에러핸들러로 넘겨야 한다.  
+아니면 브라우저가 응답을 계속 기다리기 때문이다.  
+
+next함수에는 라우터에서만 동작하는 특수기능이 있다. next('route')처럼 사용하며,  
+라우터에 연결된 나머지 미들웨어들을 건너뛰고 싶을 때 사용한다.  
+router.get(주소, 콜백함수); 가 있을 때, 콜백함수에 next('route')코드를 만나면  
+아래 코드는 실행되지 않고 주소와 일치하는 다음 라우터로 넘어가 실행한다.  
+
+라우터 주소에는 특수한 패턴을 사용할 수 있다. 여러 패턴 중 다음 패턴이 자주쓰인다.  
+
+~~~
+router.get('/users/:id', function(req, res) {
+  console.log(req.params, req.query);
+});
+~~~
+
+주소에 :id를 넣음으로써 req.params.id를 조회하여 값을 얻어낸다.  
+/users/123 처럼 주소가 들어오면 req.params는 {id:'123'}으로 되어있다.  
+주소에 쿼리스트링도 잡아낼 수 있는데, req.query 객체 안에 키-값이 들어있다.  
+/users/123?name=chahaun 주소 요청이 들어오면 req.params와 req.query객체는  
+{ id:'123' } { name='chahaun' } 으로 들어있다.  
+이렇게 사용할 수 있으며, 일반 라우터보다 뒤에 위치해야 방해가 되지 않는다.  
+
+에러가 발생하지 않았으면 클라이언트에게 응답을 보내주어야 한다.  
+send, sendFile, json, redirect, render 메서드 등이 있다.  
+send : 버퍼 데이터나 문자열, html코드, json 데이터 등을 전송한다.  
+기본적으로 200 상태코드를 응답하지만, res.status(404).send('Not Found')처럼 조작가능  
+sendFile : 파일을 응답으로 보내준다.  
+json : JSON 데이터를 보내준다.  
+redirect : 응답을 다른 라우터로 보내준다. (ex 메인 페이지로 보냄)  
+render : res.render('템플릿 파일경로', { 변수 }); 처럼 
+템플릿 엔진을 렌더링 할 때 사용한다. views 폴더 안 pug확장자를 가진 파일이 템플릿엔진이다.  
+
+라우터가 요청을 처리하지 못할 때는 404 HTTP 상태코드를 보내주어야 하므로  
+다음 미들웨어에서 새로운 에러를 만들고 에러의 상태코드를 404로 설정한 뒤  
+에러처리 미들웨어로 넘겨버린다.
