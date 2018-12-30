@@ -25,6 +25,7 @@ req에는 요청에 관한 정보들, res에는 응답에 관한 정보들이 �
 포트번호를 이용하여 대기하며, 연결되면 실행할 콜백함수를 넣어준다.  
 실행할 콜백함수가 여러개(정상처리, 에러처리 등)이면 on메서드로 따로 빼준다.  
 간단한 노드 서버 코드는 다음과 같다.  
+
 ~~~
 const http = require('http');
 const server = http.createServer((req, res) => {
@@ -62,6 +63,7 @@ res.end는 응답을 종료하는 메서드로, 인자를 보내고 응답을 �
 ~~~
 
 * server1.js  
+
 ~~~
 const http = require('http');
 const fs = require('fs');
@@ -125,4 +127,61 @@ createServer에서 writeHead의 Set-Cookie는 다음과 같은 값의 쿠키를 
 응답을 받은 브라우저는 mycookie=test라는 쿠키를 저장하며, 쿠키를 파싱한다.  
 
 이 쿠키와 세션 개념을 이용하여 로그인을 구현하는 코드를 작성해 볼 수 있다.  
+html파일에선 다음과 같이 폼 데이터코드를 작성한다.
+
+~~~
+<form action="/login">
+  <input id="name" name="name" placeholder="이름을 입력하세요" />
+  <button id="login">로그인</button>
+</form>
+~~~
+
+쿠키와 로그인을 구현해주는 js코드는 다음과 같다.  
+
+~~~
+const http = require('http');
+const fs = require('fs');
+const url = require('url');
+const qs = require('querystring');
+
+// 쿠키 데이터를 파싱
+const parseCookies = (cookie = '') =>
+  cookie
+    .split(';')
+    .map(v => v.split('='))
+    .reduce((acc, [k, v]) => {
+      acc[k.trim()] = decodeURIComponent(v);
+      return acc;
+    }, {});
+
+// 서버생성
+http.createServer((req, res) => {
+  const cookies = parseCookies(req.headers.cookie);
+  if (req.url.startsWith('/login')) {   // 주소가 /login으로 시작할 경우
+    const { query } = url.parse(req.url); // url을 쿼리로 파싱
+    const { name } = qs.parse(query); // 쿼리를 
+    const expires = new Date();
+    expires.setMinutes(expires.getMinutes() + 5);   // 쿠키 만료시간을 5분뒤로 설정
+    res.writeHead(302, {
+      Location: '/',    // 바로 이동할 주소(리다이렉트 주소)
+      'Set-Cookie': `name=${encodeURIComponent(name)};  // name변수를 인코딩(헤더라서)후 쿠키저장
+      Expires=${expires.toGMTString()}; HttpOnly; Path=/`,
+    });
+    res.end();
+  } else if (cookies.name) {   // 쿠키의 name에 값이 있을 때
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    res.end(`${cookies.name}님 안녕하세요`);
+  } else {
+    fs.readFile('./server4.html', (err, data) => {
+      if (err) {
+        throw err;
+      }
+      res.end(data);
+    });
+  }
+})  // 클라이언트 접속 대기
+  .listen(8080, () => {
+    console.log('서버 대기중...');
+  });
+~~~
 
