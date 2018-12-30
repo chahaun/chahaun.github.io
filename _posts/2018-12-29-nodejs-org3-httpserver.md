@@ -159,24 +159,26 @@ http.createServer((req, res) => {
   const cookies = parseCookies(req.headers.cookie);
   if (req.url.startsWith('/login')) {   // 주소가 /login으로 시작할 경우
     const { query } = url.parse(req.url); // url을 쿼리로 파싱
-    const { name } = qs.parse(query); // 쿼리를 
+    const { name } = qs.parse(query); // 쿼리를 name값으로 파싱
     const expires = new Date();
     expires.setMinutes(expires.getMinutes() + 5);   // 쿠키 만료시간을 5분뒤로 설정
-    res.writeHead(302, {
+    res.writeHead(302, {  // 302응답코드로 지정
       Location: '/',    // 바로 이동할 주소(리다이렉트 주소)
       'Set-Cookie': `name=${encodeURIComponent(name)};  // name변수를 인코딩(헤더라서)후 쿠키저장
-      Expires=${expires.toGMTString()}; HttpOnly; Path=/`,
+      Expires=${expires.toGMTString()};  // 쿠키의 만료시간 지정
+      HttpOnly; // 자바스크립트에서 쿠키에 접근할 수 없게한다. 조작을 막는다.
+      Path=/`,  // 쿠키가 전송 될 도메인을 지정한다. 기본값은 현재 도메인.
     });
     res.end();
-  } else if (cookies.name) {   // 쿠키의 name에 값이 있을 때
+  } else if (cookies.name) {   // 쿠키의 name에 값이 있을 때(/로 접속하면 쿠키있는지 확인)
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
     res.end(`${cookies.name}님 안녕하세요`);
-  } else {
+  } else {  // 확인 후 쿠키가 없다면 이름 입력 html을 불러온다.
     fs.readFile('./server4.html', (err, data) => {
-      if (err) {
+      if (err) {  // 입력 에러처리
         throw err;
       }
-      res.end(data);
+      res.end(data);  // 읽어온 html문서를 
     });
   }
 })  // 클라이언트 접속 대기
