@@ -1,7 +1,7 @@
 ---
 layout: tag-blog
 title: MongoDB
-slug: mongo
+slug: mongodb
 category: study
 menu: false
 order: 6
