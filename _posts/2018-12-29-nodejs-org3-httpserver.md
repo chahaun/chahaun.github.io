@@ -18,7 +18,7 @@ Node.js에 대한 문법 및 내용 기본정리 3으로, http모듈로 웹 서�
 클라이언트에게 응답(response)를 보내는 것이 요청과 응답이다.  
 
 노드서버를 위해서 http모듈을 사용한다.  
-이후 `http.createServer((req, res) => { //응답 });` 으로 요청에 대한 콜백함수가 실행한다.  
+이후 `http.createServer((req, res) => { //응답 });` 으로 요청에 대한 콜백함수가 실행.  
 req에는 요청에 관한 정보들, res에는 응답에 관한 정보들이 담겨있다.  
 이 응답부분에 res.write와 res.end로 응답 서버페이지에 출력을 띄울 수 있다.  
 이후 createServer 메서드 뒤에 listen 메서드를 붙여서 접속을 대기한다.  
