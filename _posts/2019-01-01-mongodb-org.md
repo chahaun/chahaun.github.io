@@ -3,7 +3,7 @@ layout: post
 title:  "MongoDB 기본정리"
 subtitle:   "MongoDB"
 categories: study
-tags: mongo nosql
+tags: mongodb nosql
 ---
 
 Mongo DB에 대한 기본 정리
