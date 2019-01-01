@@ -52,6 +52,7 @@ show collections : db의 컬렉션 목록 확인
 
 실습에서는 컬렉션에 users, comments 를 생성하여 사용자와 댓글 컬렉션을 이용한다.  
 * Create (생성)  
+
 몽고디비의 컬렉션에는 아무 데이터나 넣을 수 있다는 자유로움이 있다.  
 기본적으로 자바스크립트 문법을 따르고, 추가적인 자료형이 있다.  
 추가적인 자료형은 Binary Data, ObjectId, Int, Long, Decimal, Timestamp, JavaScript이다.  
@@ -67,6 +68,24 @@ db.comments.save({ commenter: ObjectId('사용자의 Id값'), comment:'댓글입
 ~~~
 
 * Read (조회)  
-db.컬렉션명.find({}); 명령을 통해 해당 컬렉션의 다큐먼트들을 조회할 수 있다.  
 
+db.컬렉션명.find({ }); 명령을 통해 해당 컬렉션의 다큐먼트들을 조회할 수 있다.  
+`db.users.find({}, {_id: 0, name: 1, married: 1});` 처럼 원하는 데이터만  
+조회할 수 있다. 0은 가져오지 않도록, 1은 가져오도록 설정하는 값이다.  
+조회할 때 조건을 넣어서 조회하려면 첫번째 인자에 객체를 넣는다.  위 명령어에서  
+`db.users.find({age: {$gt: 30}, {_id: 0, name: 1, married: 1});`  
+이렇게 age\>30인 조건을 넣어서 조회할 수 있다.  
+몽고디비는 자바스크립트를 따르므로 특수연산자($gt) 등을 사용한다.  
+~~~
+db.users.find({$or: [{age: {$gt: 30} }, { married: false }] }, { _id: 0, name: 1, age: 1 });
+~~~
+위와 같이 OR연산자를 사용할 수 있으며, 정렬조회를 할때는 아래와 같이 입력한다.  
+조회할 다큐먼트의 개수를 설정할 땐 limit메서드를 뒤에 붙여준다.  
+몇개를 건너뛰면서 조회할 때는 뒤에 skip메서드를 붙여준다.  
+~~~
+db.users.find({}, {_id: 0, name: 1, married: 1}).sort({ age: -1 })
+// -1은 오름차순, 1은 내림차순으로 정렬한다.
+~~~
+
+* Update (수정)  
 
