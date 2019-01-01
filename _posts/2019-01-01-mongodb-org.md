@@ -51,7 +51,7 @@ db.createCollection('컬렉션명') : db에 컬렉션 생성. 보통은 다큐�
 show collections : db의 컬렉션 목록 확인
 
 실습에서는 컬렉션에 users, comments 를 생성하여 사용자와 댓글 컬렉션을 이용한다.  
-* Create (생성)
+* Create (생성)  
 몽고디비의 컬렉션에는 아무 데이터나 넣을 수 있다는 자유로움이 있다.  
 기본적으로 자바스크립트 문법을 따르고, 추가적인 자료형이 있다.  
 추가적인 자료형은 Binary Data, ObjectId, Int, Long, Decimal, Timestamp, JavaScript이다.  
@@ -66,6 +66,7 @@ ObjectId는 기본 키의 역할이며, 고유한 값을 가지므로 다큐먼�
 db.comments.save({ commenter: ObjectId('사용자의 Id값'), comment:'댓글입력', createdAt: new Date()});
 ~~~
 
-* Read (조회)
+* Read (조회)  
+db.컬렉션명.find({}); 명령을 통해 해당 컬렉션의 다큐먼트들을 조회할 수 있다.  
 
 
