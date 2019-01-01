@@ -105,14 +105,14 @@ var indexRouter = require('./routes/index');
 var userRouter = require('./routes/users');
 ...
 app.use('/', indexRouter);        // 주소가 '/' 로 시작하면 routes/index.js 호출
-app.user('/users', userRouter);   // '/users' 로 시작하면 routes/users.js 호출
+app.use('/users', userRouter);   // '/users' 로 시작하면 routes/users.js 호출
 ...
 ~~~
 
 app.use로 연결되어 있는걸 보면 라우터도 일종의 미들웨어로 볼 수 있다.  
 다른 미들웨어와 다르게 앞에 주소가 붙어있다. 그래서 이 주소에 해당하는 요청이  
 왔을 때만 미들웨어가 동작하게 할 수 있다.  
-app.use 대신 get, post, put, patch, delete같은 HTTP 메서드를 사용할 수 있다.  
+use 대신 get, post, put, patch, delete같은 HTTP 메서드를 사용할 수 있다.  
 그러면 get을 썼다면 get 메서드의 특정 주소에 요청일때만 실행되는 식이다.  
 use일때는 HTTP 메서드는 상관없다.  
 
@@ -124,7 +124,7 @@ var express = require('express');
 var router = express.Router();  // 라우터객체는 이와같이 만든다
 
 router.get('/', function(req, res, next) {   // '/' 주소로 GET 요청을 한다
-  res.render('index', {title: 'Express' });  // 클라이언트에게 응답을 보낸다
+  res.render('index', {title: 'Express' });  // 클라이언트에게 응답을 데이터를 동봉해서 보낸다
 });
 module.exports = router;    // 라우터를 모듈로 만든다
 ~~~
