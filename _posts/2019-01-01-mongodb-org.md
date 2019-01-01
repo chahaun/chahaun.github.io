@@ -50,4 +50,22 @@ db : 현재 사용중인 데이터베이스 확인
 db.createCollection('컬렉션명') : db에 컬렉션 생성. 보통은 다큐먼트 넣을때 자동으로 생성.  
 show collections : db의 컬렉션 목록 확인
 
+실습에서는 컬렉션에 users, comments 를 생성하여 사용자와 댓글 컬렉션을 이용한다.  
+* Create (생성)
+몽고디비의 컬렉션에는 아무 데이터나 넣을 수 있다는 자유로움이 있다.  
+기본적으로 자바스크립트 문법을 따르고, 추가적인 자료형이 있다.  
+추가적인 자료형은 Binary Data, ObjectId, Int, Long, Decimal, Timestamp, JavaScript이다.  
+ObjectId는 기본 키의 역할이며, 고유한 값을 가지므로 다큐먼트 조회에 사용된다.  
+
+`db.컬렉션명.save({ 다큐먼트 })` 형태로 다큐먼트를 생성하게 된다.  
+`db.users.save({ name:'chahaun', age: 25 });` 처럼 데이터를 생성할 수 있다.  
+생성한 다큐먼트의 \_id를 알기위해서는 `db.users.find({ name:'chahaun'}, {_id:1})`를  
+입력하여 ObjectId 값을 얻어낸다. 출력된 값을 이용하여 다른 컬렉션과 연동할 수 있다.  
+이를 통해 사용자에 대한 댓글을 추가할 땐 다음 코드를 작성한다.  
+~~~
+db.comments.save({ commenter: ObjectId('사용자의 Id값'), comment:'댓글입력', createdAt: new Date()});
+~~~
+
+* Read (조회)
+
 
