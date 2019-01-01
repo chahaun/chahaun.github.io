@@ -35,11 +35,19 @@ SQL의 table, row, column => collection, document, field
 mongod 명령어를 입력하면 몽고디비 서버를 실행할 수 있다.  
 서버를 실행한 이후, 새로운 콘솔창에서 mongo 명령어를 입력하면 몽고디비 프롬프트에 접속되며  
 누구나 몽고디비 접속할 수 있게 된다. 이제 계정을 만들어 주어야 하므로,  
-use admin 명령어를 입력 후 `db.createUser({ user: 'root', pwd: '비밀번호', roles: ['root'] })`  
+use admin 명령어를 입력 후  
+`db.createUser({ user: 'root', pwd: '비밀번호', roles: ['root'] })`  
 명령어를 입력하여 root계정을 생성해준다. 이제 루트로 접속하기 위해 몽고디비 서버를 끈 후  
 mongod --auth 명령어로 로그인이 필요한 몽고디비 서버를 켠 후에 새로운 콘솔창에서  
 mongo admin -u root -p 비밀번호 명령을 통해 몽고디비에 접속해준다.  
+몽고디비에는 compass라는 워크벤치와 비슷한 프로그램이다.  
 
-### DB 및 Collection 생성하기
+### 몽고디비의 명령어 및 CRUD
+
+use 데이터베이스명 : 데이터베이스를 하나 생성한다  
+show dbs : 데이터베이스 목록 확인  
+db : 현재 사용중인 데이터베이스 확인  
+db.createCollection('컬렉션명') : db에 컬렉션 생성. 보통은 다큐먼트 넣을때 자동으로 생성.  
+show collections : db의 컬렉션 목록 확인
 
 
