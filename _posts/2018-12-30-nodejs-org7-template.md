@@ -6,7 +6,7 @@ categories: study
 tags: node nodejs express template
 ---
 
-Node.js에 대한 문법 및 내용 기본정리 6으로, 익스프레스 구조를 알아본다.
+Node.js에 대한 문법 및 내용 기본정리 7으로, 템플릿  알아본다.
 
 # Node.js
 
