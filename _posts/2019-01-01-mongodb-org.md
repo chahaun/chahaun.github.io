@@ -114,13 +114,109 @@ Object Document Mapping으로 다큐먼트를 사용하기 때문이다.
 또한 JOIN기능은 populate 메서드가 보완해준다. 그래서 관계가 있는 데이터를  
 쉽게 가져올 수 있게 되며, ES2015 프로미스 문법과 쿼리빌더를 지원한다.  
 
+몽구스 스키마의 자료형은 String, Number, Date, Buffer, Boolean, Mixed, Array 등  
+몽고디비의 자료형과 살짝 다르다.  
+
 express learn-mongoose --view=pug로 프로젝트 생성 후 안에서 npm i로 모듈 설치 후  
 npm i mongoose 명령어로 몽구스를 설치해준다.  
 
 노드와 몽구스를 연동하려면 주소를 사용하여 연결해야 한다.  
 `mongodb://[username:password@]host[:port][/[database][?options]]` 의 형식이며,  
-\[\]로 되어있는 부분은 있어도 되고 없어도 되는 부분이다.  
+\[ \]로 되어있는 부분은 있어도 되고 없어도 되는 부분이다.  
 따라서 간단하게 mongodb://이름:비밀번호@localhost:27017/admin 을 이용한다.  
 접속부분은 schemas/index.js 파일의 mongoose.connect()부분에 작성해야 한다.  
 connect('접속주소', {사용할 DB명}, {콜백함수}) 형식으로 작성한다.  
+이 파일을 모듈로 만들어서 app.js에서 연결해서 노드 실행 시 mongoose.connect 부분이  
+실행되도록 해주어야 한다. 작성코드는 생략한다.  
 
+몽구스의 스키마를 정의하기 위해서 schemas/user.js 파일을 생성하여 작성한다.  
+또한 댓글을 위해 comment.js도 작성하여 코드를 작성한다.  
+~~~
+const mongoose = require('mongoose');
+const {Schema} = mongoose; // mongoose.Schema를 Schema변수에 적용한다.
+const userSchema = new Schema({
+  name: {
+    type: String,     // 자료형은 String
+    required: true,   // 필수로 데이터 작성
+    unique: true,     // 고유값이어야 함
+  },
+  ... 나머지 다큐먼트 작성
+});
+
+module.exports = mongoose.model('User', userSchema);
+// 몽구스는 컬렉션을 생성할 때, model메서드의 첫번째 인자를 참고해서 생성한다.
+// 첫번째 대문자를 소문자로 하고, 복수형으로 만들어서 users 컬렉션을 생성하는데,
+// 원하는 이름의 컬렉션을 생성하려면 세번째 인자로 이름을 지정해준다.
+// mongoose.model('User', userSchema, 'user_table'); 처럼 지정해준다.
+~~~
+
+comment.js에서 user의 ObjectId로 사용자에 맞게 연결하기 위해서  
+~~~
+const commentSchema = new Schema({
+  commenter: {
+    type: ObjectId,     // User의 ObjectId를 사용하여 연결
+    required: true,     // 필수로 데이터 작성
+    ref: 'User',        // User 스키마를 사용
+  },
+  ... 나머지 다큐먼트 작성
+});
+~~~
+
+이러한 기능은 몽구스가 JOIN과 비슷한 기능을 할 때 사용된다.  
+
+### 몽구스 쿼리 수행하기
+
+MVC 모델과 비슷하게 스키마,뷰,라우터가 있다.  
+
+스키마는 schemas폴더의 index.js, user.js, comment.js가 있다.  
+index.js에는 몽고디비와 노드를 연동해주는 연결코드가 있으며,  
+user.js에는 user에 대한 몽구스 스키마가 있으며,  
+comment.js에는 comment에 대한 몽구스 스키마가 구성되어 있다.  
+
+뷰는 페이지 화면을 보여주는 파일인 views/mongoose.pug가 존재하고, 내부에서  
+기능을 위해 public/mongoose.js가 존재한다.  
+mongoose.js에서는 사용자가 이름을 작성하고 저장버튼을 누르면 AJAX형식으로  
+처리되어서 리스트에 사용자가 추가되거나, 댓글을 생성 및 수정 삭제할때  
+AJAX형식으로 리스트에 추가되고 동적으로 수정, 삭제를 진행할 수 있도록 한다.  
+
+라우터(컨트롤러)는 routes폴더의 index.js, users.js, comments.js가 있다.  
+index.js는 GET /로 접속했을 때 모든 사용자를 검색한 후, mongoose.pug를  
+렌더링할때 (페이지를 불러올 때) users 변수를 넣어 렌더링한다. 에러처리도 한다.  
+즉, 미리 DB에서 데이터를 조회한 후 템플릿 렌더링에 사용할 수 있다.  
+
+users.js는 GET /users와 POST /users 주소로 요청이 들어올때 처리를 해준다.  
+GET /users로 요청이 들어오면 사용자를 조회하는 것이며, res.json(users)로  
+JSON 형식으로 조회값을 반환해준다.  
+POST /users로 요청이 들어오면 사용자를 등록하는 것이며, 먼저 new User()로  
+user 객체를 생성하여 모델을 만든 후 안에 다큐먼트에 넣을 내용을 적는다.  
+그 후에 user.save()를 이용해 데이터를 저장하는 코드를 작성한다.  
+
+comments.js에서는 댓글에 대한 CRUD 작업을 진행한다.  
+GET /comments/:id(조회), POST /comments(생성), PATCH /comments/:id(수정),  
+DELETE /comments/:id(삭제) 총 4가지가 있다.  
+조회를 예로들면 id로 조회하므로  
+~~~
+var express = require('express');
+var Comment = require('../schemas/comment');    // comment모듈을 받아온다
+var router = express.Router();
+router.get('/:id', function(req, res, next) {   // id값을 받아온다
+  Comment.find({ commenter: req.params.id }).populate('commenter')  // 사용자 id값으로 조회 후 populate로 그 컬렉션의 다큐먼트를 불러온다
+    .then((comments) => {
+      console.log(comments);
+      res.json(comments);   // 조회한 데이터를 JSON형식으로 반환해준다.
+    })
+    .catch((err) => {
+      console.error(err);
+      next(err);
+    });
+});
+... 생성/수정/삭제는 생략
+~~~
+
+이렇게 스키마, 뷰, 라우터 파일들이 구성되어 있으며 마지막으로 라우터를 서버에  
+연결하기 위해 app.js파일에 원래 없었던 라우터의 comments 모듈을 받아서  
+`app.use('/comments', comment모듈);` 코드로 연결한 후에 express.static  
+코드 위치를 logger 아래에 위치한 후 저장하고 서버를 실행한다.  
+
+이러한 예제는 사용자를 등록하여 몽고디비에 저장하고, 사용자의 아이디를 이용하여  
+댓글을 등록하고 댓글을 수정 및 삭제를 할 수 있는 예제로 구성되어있다.  
