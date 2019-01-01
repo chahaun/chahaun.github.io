@@ -69,7 +69,7 @@ db.comments.save({ commenter: ObjectId('사용자의 Id값'), comment:'댓글입
 
 * Read (조회)  
 
-db.컬렉션명.find({ }); 명령을 통해 해당 컬렉션의 다큐먼트들을 조회할 수 있다.  
+db.컬렉션명.find({조건}, {조회할 다큐먼트}); 명령을 통해 다큐먼트들을 조회할 수 있다.  
 `db.users.find({}, {_id: 0, name: 1, married: 1});` 처럼 원하는 데이터만  
 조회할 수 있다. 0은 가져오지 않도록, 1은 가져오도록 설정하는 값이다.  
 조회할 때 조건을 넣어서 조회하려면 첫번째 인자에 객체를 넣는다.  위 명령어에서  
@@ -88,4 +88,39 @@ db.users.find({}, {_id: 0, name: 1, married: 1}).sort({ age: -1 })
 ~~~
 
 * Update (수정)  
+
+db.컬렉션명.update({수정할 다큐먼트}, {$set: {수정할 내용} });
+이때 $set은 일부 필드만 수정하고 싶을때 꼭 사용해야하며, 사용하지 않고 쓰면  
+다큐먼트가 통째로 수정할 내용으로 바뀌어버린다.  
+`db.users.update({name:'chahaun'}, {$set: {comment:'설명변경'} });`  
+
+* Delete (삭제)
+
+db.컬렉션명.remove({삭제할 다큐먼트})로 삭제하면 된다.  
+`db.users.remove({name:'chahaun'})`  
+
+몽고디비를 노드와 연동하여 서버에서 DB를 조작할 수 있도록 해야하는데, 몽구스를 이용한다.  
+
+### Mongoose (몽구스)
+
+MongoDB와 Node를 연동해주며, 쿼리까지 만들어준다.  
+MySQL의 시퀄라이즈와 비슷하지만, 시퀄라이즈는 ORM인 반면에 몽구스는 ODM이다.  
+Object Document Mapping으로 다큐먼트를 사용하기 때문이다.  
+
+몽구스를 사용하는 이유는 몽고디비에 없는 기능들을 보완해주기 때문인데,  
+몽구스에는 스키마가 있어서 몽고디비에 데이터를 넣기 전 데이터를 한번 필터링해준다.  
+그래야 자유롭게 데이터를 넣는 몽고디비에 실수를 막을 수 있기 때문이다.  
+
+또한 JOIN기능은 populate 메서드가 보완해준다. 그래서 관계가 있는 데이터를  
+쉽게 가져올 수 있게 되며, ES2015 프로미스 문법과 쿼리빌더를 지원한다.  
+
+express learn-mongoose --view=pug로 프로젝트 생성 후 안에서 npm i로 모듈 설치 후  
+npm i mongoose 명령어로 몽구스를 설치해준다.  
+
+노드와 몽구스를 연동하려면 주소를 사용하여 연결해야 한다.  
+`mongodb://[username:password@]host[:port][/[database][?options]]` 의 형식이며,  
+\[\]로 되어있는 부분은 있어도 되고 없어도 되는 부분이다.  
+따라서 간단하게 mongodb://이름:비밀번호@localhost:27017/admin 을 이용한다.  
+접속부분은 schemas/index.js 파일의 mongoose.connect()부분에 작성해야 한다.  
+connect('접속주소', {사용할 DB명}, {콜백함수}) 형식으로 작성한다.  
 
