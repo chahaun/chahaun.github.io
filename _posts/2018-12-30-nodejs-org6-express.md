@@ -19,7 +19,10 @@ npm에는 서버 제작 시 불편함을 해소하고, 편의 기능을 추가�
 기존 메서드들도 계속 사용하면서 편리한 메서드들을 추가하여 기능을 보완하였다.  
 또한 코드를 분리하기 쉽게 만들어 유지보수에도 용이하고, if문으로 구별하지 않아도 된다.  
 
-익스프레스를 Express-generator로 npm전역설치를 해준다.  
+Express-generator은 프레임워크에 필요한 package.json 및 폴더구조를 자동으로 잡아준다.  
+app.js+views+routes+public+bin(www)정도를 잡아주며 models은 따로 만들자.  
+
+익스프레스를 Express-generator로 npm전역설치를 해준다.(npm i -g Ex\~)  
 기본적으로 PUG(Jade)를 템플릿 엔진으로 설치한다. EJS를 사용할 수도 있다.  
 `express 프로젝트명 --view=pug` 명령으로 프로젝트를 생성해 준다.  
 생성한 폴더에서 npm i로 npm모듈들을 설치해주면 서버관련 폴더를 초기화해준다.  
